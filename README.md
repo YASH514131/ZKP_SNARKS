@@ -257,5 +257,6 @@ This project is for educational purposes demonstrating real Zero-Knowledge Proof
 ---
 
 **🎯 This is genuine Zero-Knowledge Proof technology** - the same mathematical principles used by Zcash, Polygon, and other blockchain privacy systems! 🔐
-#   Z K P _ A G E  
+#   Z K P _ A G E 
+ 
  
