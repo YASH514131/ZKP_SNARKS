@@ -1,0 +1,48 @@
+name: Deploy zk-SNARK Backend to Azure
+
+on:
+  push:
+    branches: [ main, master ]
+    paths: [ 'backend/**' ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: zksnark-age-verification
+  AZURE_WEBAPP_PACKAGE_PATH: './backend'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Pip'
+      shell: bash
+      run: |
+        pushd '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        popd
+
+    - name: 'Run Tests'
+      shell: bash
+      run: |
+        pushd '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+        # Add your test commands here
+        python -c "import zksnark_age_verification; print('✅ Import test passed')"
+        popd
+
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
